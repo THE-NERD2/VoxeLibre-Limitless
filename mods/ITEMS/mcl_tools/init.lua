@@ -557,7 +557,7 @@ minetest.register_tool("mcl_tools:axe_netherite", {
 })
 
 -- Swords
-minetest.register_tool("mcl_tools:sword_wood", {
+vll_better_combat.register_melee("mcl_tools:sword_wood", {
 	description = S("Wooden Sword"),
 	_doc_items_longdesc = sword_longdesc,
 	_doc_items_hidden = false,
@@ -578,7 +578,7 @@ minetest.register_tool("mcl_tools:sword_wood", {
 		swordy_cobweb = { speed = 2, level = 1, uses = 60 }
 	},
 })
-minetest.register_tool("mcl_tools:sword_stone", {
+vll_better_combat.register_melee("mcl_tools:sword_stone", {
 	description = S("Stone Sword"),
 	_doc_items_longdesc = sword_longdesc,
 	inventory_image = "default_tool_stonesword.png",
@@ -598,7 +598,7 @@ minetest.register_tool("mcl_tools:sword_stone", {
 		swordy_cobweb = { speed = 4, level = 3, uses = 132 }
 	},
 })
-minetest.register_tool("mcl_tools:sword_iron", {
+vll_better_combat.register_melee("mcl_tools:sword_iron", {
 	description = S("Iron Sword"),
 	_doc_items_longdesc = sword_longdesc,
 	inventory_image = "default_tool_steelsword.png",
@@ -618,7 +618,7 @@ minetest.register_tool("mcl_tools:sword_iron", {
 		swordy_cobweb = { speed = 6, level = 4, uses = 251 }
 	},
 })
-minetest.register_tool("mcl_tools:sword_gold", {
+vll_better_combat.register_melee("mcl_tools:sword_gold", {
 	description = S("Golden Sword"),
 	_doc_items_longdesc = sword_longdesc,
 	inventory_image = "default_tool_goldsword.png",
@@ -638,7 +638,7 @@ minetest.register_tool("mcl_tools:sword_gold", {
 		swordy_cobweb = { speed = 12, level = 2, uses = 33 }
 	},
 })
-minetest.register_tool("mcl_tools:sword_diamond", {
+vll_better_combat.register_melee("mcl_tools:sword_diamond", {
 	description = S("Diamond Sword"),
 	_doc_items_longdesc = sword_longdesc,
 	inventory_image = "default_tool_diamondsword.png",
@@ -660,7 +660,7 @@ minetest.register_tool("mcl_tools:sword_diamond", {
 	_mcl_upgradable = true,
 	_mcl_upgrade_item = "mcl_tools:sword_netherite"
 })
-minetest.register_tool("mcl_tools:sword_netherite", {
+vll_better_combat.register_melee("mcl_tools:sword_netherite", {
 	description = S("Netherite Sword"),
 	_doc_items_longdesc = sword_longdesc,
 	inventory_image = "default_tool_netheritesword.png",
