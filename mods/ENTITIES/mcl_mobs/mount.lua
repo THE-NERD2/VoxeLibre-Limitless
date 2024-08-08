@@ -258,6 +258,18 @@ function mcl_mobs.drive(entity, moving_anim, stand_anim, can_fly, dtime)
 		end
 	end
 
+	-- Stop!
+	local s = get_sign(entity.v)
+
+	entity.v = entity.v - 0.02 * s
+
+	if s ~= get_sign(entity.v) then
+
+		entity.object:set_velocity({x = 0, y = 0, z = 0})
+		entity.v = 0
+		return
+	end
+
 	-- if not moving then set animation and return
 	if entity.v == 0 and velo.x == 0 and velo.y == 0 and velo.z == 0 then
 
@@ -273,6 +285,194 @@ function mcl_mobs.drive(entity, moving_anim, stand_anim, can_fly, dtime)
 		mcl_mobs:set_animation(entity, moving_anim)
 	end
 
+	-- enforce speed limit forward and reverse
+	local max_spd = entity.max_speed_reverse
+
+	if get_sign(entity.v) >= 0 then
+		max_spd = entity.max_speed_forward
+	end
+
+	if math.abs(entity.v) > max_spd then
+		entity.v = entity.v - get_sign(entity.v)
+	end
+
+	-- Set position, velocity and acceleration
+	local p = entity.object:get_pos()
+	local new_velo
+	local new_acce = {x = 0, y = -9.8, z = 0}
+
+	p.y = p.y - 0.5
+
+	local ni = node_is(p)
+	local v = entity.v
+
+	if ni == "air" then
+
+		if can_fly == true then
+			new_acce.y = 0
+		end
+
+	elseif ni == "liquid" or ni == "lava" then
+
+		if ni == "lava" and entity.lava_damage ~= 0 then
+
+			entity.lava_counter = (entity.lava_counter or 0) + dtime
+
+			if entity.lava_counter > 1 then
+
+				minetest.sound_play("default_punch", {
+					object = entity.object,
+					max_hear_distance = 5
+				}, true)
+
+				entity.object:punch(entity.object, 1.0, {
+					full_punch_interval = 1.0,
+					damage_groups = {fleshy = entity.lava_damage}
+				}, nil)
+
+				entity.lava_counter = 0
+			end
+		end
+
+		if entity.terrain_type == 2
+		or entity.terrain_type == 3 then
+
+			new_acce.y = 0
+			p.y = p.y + 1
+
+			if node_is(p) == "liquid" then
+
+				if velo.y >= 5 then
+					velo.y = 5
+				elseif velo.y < 0 then
+					new_acce.y = 20
+				else
+					new_acce.y = 5
+				end
+			else
+				if math.abs(velo.y) < 1 then
+					local pos = entity.object:get_pos()
+					pos.y = math.floor(pos.y) + 0.5
+					entity.object:set_pos(pos)
+					velo.y = 0
+				end
+			end
+		else
+			v = v * 0.25
+		end
+	end
+
+	new_velo = get_velocity(v, entity.object:get_yaw() - rot_view, velo.y)
+	new_acce.y = new_acce.y + acce_y
+
+	entity.object:set_velocity(new_velo)
+	entity.object:set_acceleration(new_acce)
+
+	-- CRASH!
+	if enable_crash then
+
+		local intensity = entity.v2 - v
+
+		if intensity >= crash_threshold then
+
+			entity.object:punch(entity.object, 1.0, {
+				full_punch_interval = 1.0,
+				damage_groups = {fleshy = intensity}
+			}, nil)
+
+		end
+	end
+
+	entity.v2 = v
+end
+
+function mcl_mobs.drive_with_horizontal(entity, moving_anim, stand_anim, can_fly, dtime)
+
+	local rot_view = 0
+
+	if entity.player_rotation.y == 90 then
+		rot_view = math.pi/2
+	end
+
+	local acce_y = 0
+	local velo = entity.object:get_velocity()
+
+	entity.v = get_v(velo) * get_sign(entity.v)
+
+	-- process controls
+	if entity.driver then
+
+		local ctrl = entity.driver:get_player_control()
+
+		-- move forwards
+		if ctrl.up then
+
+			entity.v = entity.v + entity.accel / 10 * entity.run_velocity / 2.6
+
+		-- move backwards
+		elseif ctrl.down then
+
+			if entity.max_speed_reverse == 0 and entity.v == 0 then
+				return
+			end
+
+			entity.v = entity.v - entity.accel / 10
+		end
+		
+		-- Move horizontally (WIP)
+		local yaw = entity.object:get_yaw()
+		yaw = yaw + (math.pi / 2) % (2 * math.pi)
+		local left_dir = minetest.yaw_to_dir(yaw)
+		local horiz_velo = vector.zero()
+		if ctrl.left then
+			horiz_velo = vector.add(horiz_velo, left_dir)
+		end
+		if ctrl.right then
+			horiz_velo = vector.add(horiz_velo, vector.multiply(left_dir, -1))
+		end
+		horiz_velo = vector.normalize(horiz_velo)
+		horiz_velo = vector.multiply(horiz_velo, entity.run_velocity)
+		--velo = vector.add(velo, horiz_velo)
+
+		-- fix mob rotation
+		entity.object:set_yaw(entity.driver:get_look_horizontal() - entity.rotate)
+
+		if can_fly then
+
+			-- fly up
+			if ctrl.jump then
+				velo.y = velo.y + 1
+				if velo.y > entity.accel then velo.y = entity.accel end
+
+			elseif velo.y > 0 then
+				velo.y = velo.y - 0.1
+				if velo.y < 0 then velo.y = 0 end
+			end
+
+			-- fly down
+			if ctrl.sneak then
+				velo.y = velo.y - 1
+				if velo.y < -entity.accel then velo.y = -entity.accel end
+
+			elseif velo.y < 0 then
+				velo.y = velo.y + 0.1
+				if velo.y > 0 then velo.y = 0 end
+			end
+
+		else
+
+			-- jump
+			if ctrl.jump then
+
+				if velo.y == 0 then
+					velo.y = velo.y + entity.jump_height
+					acce_y = acce_y + (acce_y * 3) + 1
+				end
+			end
+
+		end
+	end
+
 	-- Stop!
 	local s = get_sign(entity.v)
 
@@ -283,6 +483,21 @@ function mcl_mobs.drive(entity, moving_anim, stand_anim, can_fly, dtime)
 		entity.object:set_velocity({x = 0, y = 0, z = 0})
 		entity.v = 0
 		return
+	end
+
+	-- if not moving then set animation and return
+	if entity.v == 0 and velo.x == 0 and velo.y == 0 and velo.z == 0 then
+
+		if stand_anim then
+			mcl_mobs:set_animation(entity, stand_anim)
+		end
+
+		return
+	end
+
+	-- set moving animation
+	if moving_anim then
+		mcl_mobs:set_animation(entity, moving_anim)
 	end
 
 	-- enforce speed limit forward and reverse
