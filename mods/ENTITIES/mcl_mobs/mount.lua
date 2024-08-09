@@ -441,7 +441,12 @@ function mcl_mobs.control(entity, moving_anim, stand_anim, dtime) -- For morph
 	p.y = p.y - 0.5
 
 	local ni = node_is(p)
-	local speed = entity.run_velocity -- TODO: check for sprint
+	local speed
+	if control.up and control.aux1 then
+		speed = entity.run_velocity
+	else
+		speed = entity.walk_velocity
+	end
 
 	if ni == "liquid" or ni == "lava" then
 
