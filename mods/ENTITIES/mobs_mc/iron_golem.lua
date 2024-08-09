@@ -13,7 +13,7 @@ local allow_nav_hacks = minetest.settings:get_bool("mcl_mob_allow_nav_hacks ",fa
 local walk_dist = 40
 local tele_dist = 80
 
-mcl_mobs.register_mob("mobs_mc:iron_golem", {
+vll_morph.register_mob("mobs_mc:iron_golem", {
 	description = S("Iron Golem"),
 	type = "npc",
 	spawn_class = "passive",
@@ -26,6 +26,7 @@ mcl_mobs.register_mob("mobs_mc:iron_golem", {
 	mesh = "mobs_mc_iron_golem.b3d",
 	head_swivel = "head.control",
 	bone_eye_height = 3.38,
+	head_eye_height = 2.7,
 	curiosity = 10,
 	textures = {
 		{"mobs_mc_iron_golem.png"},
