@@ -102,7 +102,7 @@ local zombie = {
 	attack_npcs = true,
 }
 
-mcl_mobs.register_mob("mobs_mc:zombie", zombie)
+vll_morph.register_mob("mobs_mc:zombie", zombie)
 
 -- Baby zombie.
 -- A smaller and more dangerous variant of the zombie
@@ -123,7 +123,7 @@ baby_zombie.animation = {
 	punch_start = 109, punch_end = 119
 }
 
-mcl_mobs.register_mob("mobs_mc:baby_zombie", baby_zombie)
+vll_morph.register_mob("mobs_mc:baby_zombie", baby_zombie)
 
 -- Husk.
 -- Desert variant of the zombie
@@ -140,7 +140,7 @@ husk.sunlight_damage = 0
 husk.drops = drops_common
 -- TODO: Husks avoid water
 
-mcl_mobs.register_mob("mobs_mc:husk", husk)
+vll_morph.register_mob("mobs_mc:husk", husk)
 
 -- Baby husk.
 -- A smaller and more dangerous variant of the husk
@@ -154,7 +154,7 @@ baby_husk.ignited_by_sunlight = false
 baby_husk.sunlight_damage = 0
 baby_husk.drops = drops_common
 
-mcl_mobs.register_mob("mobs_mc:baby_husk", baby_husk)
+vll_morph.register_mob("mobs_mc:baby_husk", baby_husk)
 
 
 -- Spawning
