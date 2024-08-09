@@ -38,7 +38,8 @@ local function morph(player_name, mob_name)
 		local entity = mob:get_luaentity()
 		entity.player_rotation = vector.zero()
 		entity.driver_attach_at = vector.zero()
-		entity.driver_eye_offset = vector.subtract(vector.new(0, entity.head_eye_height, 0), vector.new(0, 2.2, 0))
+		entity.driver_eye_offset = vector.multiply(vector.subtract(vector.new(0, entity.head_eye_height, 0), vector.new(0, 2.2, 0)), 6) -- Why...? It works though.
+		minetest.log(vector.to_string(entity.driver_eye_offset))
 		entity.driver_scale = {x = 0, y = 0}
 		mcl_mobs.attach(entity, player)
 		vll_morph.morphed_players[player_name] = {
