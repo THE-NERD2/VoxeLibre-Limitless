@@ -124,7 +124,7 @@ baby_zombie.animation = {
 	punch_start = 109, punch_end = 119
 }
 
-vll_morph.register_mob("mobs_mc:baby_zombie", baby_zombie)
+vll_morph.register_mob("mobs_mc:baby_zombie", baby_zombie, {required_offset = -16})
 
 -- Husk.
 -- Desert variant of the zombie
@@ -155,7 +155,7 @@ baby_husk.ignited_by_sunlight = false
 baby_husk.sunlight_damage = 0
 baby_husk.drops = drops_common
 
-vll_morph.register_mob("mobs_mc:baby_husk", baby_husk)
+vll_morph.register_mob("mobs_mc:baby_husk", baby_husk, {required_offset = -16})
 
 
 -- Spawning

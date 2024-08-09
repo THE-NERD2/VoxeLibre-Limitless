@@ -24,7 +24,8 @@ local cow_def = {
 	head_swivel = "head.control",
 	bone_eye_height = 10,
 	head_eye_height = 1.1,
-	horizontal_head_height=-1.8,
+	--horizontal_head_height=-1.8,
+	horizontal_head_height = -0.5,
 	curiosity = 2,
 	head_yaw="z",
 	makes_footstep_sound = true,
@@ -88,7 +89,7 @@ local cow_def = {
 	fear_height = 4,
 }
 
-mcl_mobs.register_mob("mobs_mc:cow", cow_def)
+vll_morph.register_mob("mobs_mc:cow", cow_def, {required_offset = -16})
 
 -- Mooshroom
 local mooshroom_def = table.copy(cow_def)
@@ -164,7 +165,7 @@ mooshroom_def.on_lightning_strike = function(self, pos, pos2, objects)
 	self.object:set_properties({ textures = self.base_texture })
 	return true
 end
-mcl_mobs.register_mob("mobs_mc:mooshroom", mooshroom_def)
+vll_morph.register_mob("mobs_mc:mooshroom", mooshroom_def, {required_offset = -16})
 
 
 -- Spawning

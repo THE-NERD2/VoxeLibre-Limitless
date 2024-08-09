@@ -8,7 +8,7 @@ local S = minetest.get_translator("mobs_mc")
 
 
 
-mcl_mobs.register_mob("mobs_mc:chicken", {
+vll_morph.register_mob("mobs_mc:chicken", {
 	description = S("Chicken"),
 	type = "animal",
 	spawn_class = "passive",
@@ -22,7 +22,8 @@ mcl_mobs.register_mob("mobs_mc:chicken", {
 	floats = 1,
 	head_swivel = "head.control",
 	bone_eye_height = 4,
-	head_eye_height = 1.5,
+	--head_eye_height = 1.5,
+	head_eye_height = 0.5,
 	horizontal_head_height = -.3,
 	curiosity = 10,
 	head_yaw="z",
@@ -112,7 +113,7 @@ mcl_mobs.register_mob("mobs_mc:chicken", {
 		}, true)
 	end,
 
-})
+}, {required_offset = -16})
 
 --spawn
 mcl_mobs:spawn_specific(

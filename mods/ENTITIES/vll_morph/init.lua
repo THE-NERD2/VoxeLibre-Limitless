@@ -12,8 +12,10 @@ local function unmorph(player_name, quiet)
 	end
 
 	local player = minetest.get_player_by_name(player_name)
+	local entity = vll_morph.morphed_players[player_name].mob:get_luaentity()
 	mcl_mobs.detach(player)
-	vll_morph.morphed_players[player_name].mob:get_luaentity().object:remove()
+	player:set_pos(entity.object:get_pos())
+	entity.object:remove()
 	vll_morph.morphed_players[player_name] = nil
 	if not quiet then
 		minetest.chat_send_player(player_name, "Successfully unmorphed!")
@@ -37,9 +39,9 @@ local function morph(player_name, mob_name)
 	if mob then
 		local entity = mob:get_luaentity()
 		entity.player_rotation = vector.zero()
-		entity.driver_attach_at = vector.zero()
-		entity.driver_eye_offset = vector.multiply(vector.subtract(vector.new(0, entity.head_eye_height, 0), vector.new(0, 2.2, 0)), 6) -- Why...? It works though.
-		minetest.log(vector.to_string(entity.driver_eye_offset))
+		local required_offset = vll_morph.registered_mobs[mob_name].details.required_offset or 0
+		entity.driver_attach_at = vector.new(0, required_offset, 0)
+		entity.driver_eye_offset = vector.new(0, (entity.head_eye_height - 2.2) * 16 - required_offset, -entity.horizontal_head_height * 16)
 		entity.driver_scale = {x = 0, y = 0}
 		mcl_mobs.attach(entity, player)
 		vll_morph.morphed_players[player_name] = {
@@ -96,6 +98,6 @@ function vll_morph.register_mob(name, details, morph_details) -- TODO: include c
 	end
 	mcl_mobs.register_mob(name, new_details)
 	vll_morph.registered_mobs[name] = {
-		details = morph_details
+		details = morph_details or {}
 	}
 end
